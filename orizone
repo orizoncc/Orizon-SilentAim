@@ -88,7 +88,7 @@ local function Notification(msg)
     })
 end
 
-Notification("Controls:\n- Toggle FOV Radius: 'T'\n- Hide/Show FOV UI (Frame + Button): 'F'")
+Notification("Controls:\n- Toggle FOV: 'T'\n- Toggle UI: 'F'")
 
 local function WallCheck(destination, ignore)
     if getgenv().Silent.Setting.WallCheck then
