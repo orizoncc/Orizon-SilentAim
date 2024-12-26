@@ -60,7 +60,6 @@ local function UpdateFOV(Radius)
         game.Players.LocalPlayer:GetMouse().X, 
         game.Players.LocalPlayer:GetMouse().Y + Inset
     )
-    
     FOV.Position = MousePosition
     FOV.Visible = getgenv().Silent.Setting.FOV.Visible
     FOV.Radius = Radius * 3.067
@@ -80,15 +79,15 @@ ToggleSilentButton.MouseButton1Click:Connect(function()
     })
 end)
 
-local function Notification(msg)
+local function Notification()
     StarterGui:SetCore("SendNotification", {
-        Title = "Silent Aim",
-        Text = msg,
-        Duration = 3
+        Title = "Controls",
+        Text = "Toggle FOV: T | Toggle UI: F",
+        Duration = 5
     })
 end
 
-Notification("Controls:\n- Toggle FOV Radius: 'T'\n- Hide/Show FOV UI (Frame + Button): 'F'")
+Notification()
 
 local function WallCheck(destination, ignore)
     if getgenv().Silent.Setting.WallCheck then
@@ -129,6 +128,29 @@ Old = hookmetamethod(game, "__index", function(self, key)
         end
     end
     return Old(self, key)
+end)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.T then
+        getgenv().Silent.Setting.FOV.Visible = not getgenv().Silent.Setting.FOV.Visible
+        ToggleSilentButton.Text = getgenv().Silent.Setting.FOV.Visible and "Disable FOV" or "Enable FOV"
+        StarterGui:SetCore("SendNotification", {
+            Title = "Silent Aim",
+            Text = getgenv().Silent.Setting.FOV.Visible and "FOV Enabled" or "FOV Disabled",
+            Duration = 3
+        })
+    end
+
+    if input.KeyCode == Enum.KeyCode.F then
+        SilentUI.Enabled = not SilentUI.Enabled
+        StarterGui:SetCore("SendNotification", {
+            Title = "Silent Aim",
+            Text = SilentUI.Enabled and "UI Enabled" or "UI Disabled",
+            Duration = 3
+        })
+    end
 end)
 
 game:BindToClose(function()
