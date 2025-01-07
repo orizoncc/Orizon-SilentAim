@@ -18,35 +18,6 @@ local CoreGui = game:GetService("CoreGui")
 local StarterGui = game:GetService("StarterGui")
 local Camera = workspace.CurrentCamera
 
-local SilentUI = Instance.new("ScreenGui")
-local FrameSilent = Instance.new("Frame")
-local UICornerSilent = Instance.new("UICorner")
-local ToggleSilentButton = Instance.new("TextButton")
-local UICornerSilent_2 = Instance.new("UICorner")
-
-SilentUI.Name = "SilentFOVSettings"
-SilentUI.Parent = CoreGui
-SilentUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-FrameSilent.Parent = SilentUI
-FrameSilent.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-FrameSilent.BorderSizePixel = 0
-FrameSilent.Size = UDim2.new(0, 150, 0, 60)
-FrameSilent.Position = UDim2.new(1, -180, 0, 100)
-FrameSilent.Active = true
-FrameSilent.Draggable = true
-UICornerSilent.Parent = FrameSilent
-
-ToggleSilentButton.Parent = FrameSilent
-ToggleSilentButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ToggleSilentButton.Position = UDim2.new(0, 5, 0, 5)
-ToggleSilentButton.Size = UDim2.new(1, -10, 1, -10)
-ToggleSilentButton.Font = Enum.Font.GothamBlack
-ToggleSilentButton.Text = "Toggle FOV Visible"
-ToggleSilentButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleSilentButton.TextScaled = true
-UICornerSilent_2.Parent = ToggleSilentButton
-
 local FOV = Drawing.new("Circle")
 FOV.Transparency = 0.5
 FOV.Thickness = 1.6
@@ -69,25 +40,15 @@ RunService.RenderStepped:Connect(function()
     UpdateFOV(getgenv().Silent.Setting.FOV.Radius)
 end)
 
-ToggleSilentButton.MouseButton1Click:Connect(function()
-    getgenv().Silent.Setting.FOV.Visible = not getgenv().Silent.Setting.FOV.Visible
-    ToggleSilentButton.Text = getgenv().Silent.Setting.FOV.Visible and "Disable FOV" or "Enable FOV"
+local function Notification(message)
     StarterGui:SetCore("SendNotification", {
         Title = "Silent Aim",
-        Text = getgenv().Silent.Setting.FOV.Visible and "FOV Enabled" or "FOV Disabled",
+        Text = message,
         Duration = 3
-    })
-end)
-
-local function Notification()
-    StarterGui:SetCore("SendNotification", {
-        Title = "Controls",
-        Text = "Toggle FOV: T | Toggle UI: F",
-        Duration = 5
     })
 end
 
-Notification()
+Notification("Toggle FOV: /fovon | /fovoff")
 
 local function WallCheck(destination, ignore)
     if getgenv().Silent.Setting.WallCheck then
@@ -130,26 +91,13 @@ Old = hookmetamethod(game, "__index", function(self, key)
     return Old(self, key)
 end)
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-
-    if input.KeyCode == Enum.KeyCode.T then
-        getgenv().Silent.Setting.FOV.Visible = not getgenv().Silent.Setting.FOV.Visible
-        ToggleSilentButton.Text = getgenv().Silent.Setting.FOV.Visible and "Disable FOV" or "Enable FOV"
-        StarterGui:SetCore("SendNotification", {
-            Title = "Silent Aim",
-            Text = getgenv().Silent.Setting.FOV.Visible and "FOV Enabled" or "FOV Disabled",
-            Duration = 3
-        })
-    end
-
-    if input.KeyCode == Enum.KeyCode.F then
-        SilentUI.Enabled = not SilentUI.Enabled
-        StarterGui:SetCore("SendNotification", {
-            Title = "Silent Aim",
-            Text = SilentUI.Enabled and "UI Enabled" or "UI Disabled",
-            Duration = 3
-        })
+game:GetService("Players").LocalPlayer.Chatted:Connect(function(message)
+    if message:lower() == "/fovon" and not getgenv().Silent.Setting.FOV.Visible then
+        getgenv().Silent.Setting.FOV.Visible = true
+        Notification("FOV Enabled")
+    elseif message:lower() == "/fovoff" and getgenv().Silent.Setting.FOV.Visible then
+        getgenv().Silent.Setting.FOV.Visible = false
+        Notification("FOV Disabled")
     end
 end)
 
