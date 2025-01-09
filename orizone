@@ -21,7 +21,7 @@ local Camera = workspace.CurrentCamera
 local FOV = Drawing.new("Circle")
 FOV.Transparency = 0.5
 FOV.Thickness = 1.6
-FOV.Color = Color3.fromRGB(255, 0, 0)
+FOV.Color = Color3.fromRGB(255, 255, 255)
 FOV.Filled = false
 
 local function UpdateFOV(Radius)
